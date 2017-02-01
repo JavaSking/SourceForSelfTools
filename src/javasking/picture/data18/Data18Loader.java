@@ -1,9 +1,12 @@
 package javasking.picture.data18;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -11,6 +14,8 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+
+import javasking.directory.FileTools;
 
 /**
  * 18Data.com专辑下载器。
@@ -121,7 +126,15 @@ public class Data18Loader implements Runnable {
 				//new DATA18MetaData("Wendy Whoppers", "http://www.data18.com/wendy_whoppers/filmography/", 1),
 				//new DATA18MetaData("Alexa Grace", "http://www.data18.com/alexa_grace/filmography/", 2),
 				//new DATA18MetaData("Angel Wicky", "http://www.data18.com/angel_wicky/filmography/", 2),
-				new DATA18MetaData("Casey Calvert", "http://www.data18.com/casey_calvert/filmography/", 5),
+				//new DATA18MetaData("Casey Calvert", "http://www.data18.com/casey_calvert/filmography/", 5),
+				//new DATA18MetaData("Jennifer White", "http://www.data18.com/jennifer_white/filmography/", 10),
+				//new DATA18MetaData("Amirah Adara", "http://www.data18.com/amirah_adara/filmography/", 4),
+				//new DATA18MetaData("Amy Anderssen", "http://www.data18.com/amy_anderssen/filmography/", 1),
+				//new DATA18MetaData("Karina Shay", "http://www.data18.com/karina_shay/filmography/", 1),
+				//new DATA18MetaData("Karina White", "http://www.data18.com/karina_white/filmography/", 2),
+				//new DATA18MetaData("Kortney Kane", "http://www.data18.com/kortney_kane/filmography/", 4),
+				new DATA18MetaData("Angela White", "http://www.data18.com/angela_white/filmography/", 1),
+				new DATA18MetaData("Chanel Preston", "http://www.data18.com/chanel_preston/filmography/", 11),
 		};
 		for(DATA18MetaData metaData : metaDatas) {
 			new Thread(new Data18Loader(metaData)).start();
@@ -138,6 +151,25 @@ public class Data18Loader implements Runnable {
 			//System.out.println(getMetaData().createNextPageURL());
 			LoaderPicture(getMetaData().createNextPageURL(), savePath);
 		}
+		StringBuffer buffer = new StringBuffer();
+		FileTools.printDirectory(savePath, 0, "  ", new FileFilter(){
+			public boolean accept(File pathname) {
+
+				if (pathname.exists() && pathname.isDirectory()) {
+					return true;
+				}
+				return false;
+			}
+		}, buffer);
+		BufferedWriter writer = null;
+		String logFile = rootPath + File.separator + getMetaData().getName() + ".txt";
+		try{
+			writer = new BufferedWriter(new FileWriter(new File(logFile)));
+			writer.write(buffer.toString());
+			writer.close();
+		}catch(Exception ex) {
+			System.err.println("Write File: [" + logFile + "] occur Error!");
+		}
 	}
 	
 	public void LoaderPicture(String pageURL, String savePath){
@@ -146,6 +178,9 @@ public class Data18Loader implements Runnable {
 		String pageContent = null;
 		pageContent = getHtmlContentByURL(pageURL);
 		pageContent = doPass(pageContent, pageURL);
+		if(pageContent.trim().isEmpty()) {
+			return;
+		}
 		Map<String, String> childPageURLS = extractChildPageURLS(pageURL, pageContent);
 		if(childPageURLS.size() > 0) {
 			for(String childpageURL : childPageURLS.keySet()) {
@@ -158,6 +193,13 @@ public class Data18Loader implements Runnable {
 	
 	private String doPass(String pageContent, String pageURL) {
 		
+		if(pageContent == null) {
+			pageContent = getHtmlContentByURL(pageURL);
+			if(pageContent == null) {
+				System.out.println("\n" + "URL : [" + pageURL + "] ERROR!");
+				return "";
+			}
+		}
 		while(pageContent.contains(CONFIRMURL)) {
 			System.out.println("[pageContent]: \n" + pageContent);
 			/* 获取检查URL*/
@@ -178,12 +220,15 @@ public class Data18Loader implements Runnable {
 		String pageContent = null;
 		pageContent = getHtmlContentByURL(pageURL);
 		pageContent = doPass(pageContent, pageURL);
+		if(pageContent.trim().isEmpty()) {
+			return;
+		}
 		System.out.println("Date:	[" + date + "]");
 		/* 提取标题 */
 		int titleStartIndex = pageContent.indexOf(TITLE);
 		int titleEndIndex = pageContent.indexOf("<", titleStartIndex + TITLE.length() + 1);
 		String title = pageContent.substring(titleStartIndex + TITLE.length(), titleEndIndex);
-		title = title.replace(':', '-').replace('/', '-'); 
+		title = title.replace(':', '-').replace('/', '-').replace('?', '-'); 
 		System.out.println("Title:	[" + title + "]");
 		/* 提取系列 */
 		String series = getSeries(pageContent);
@@ -255,6 +300,9 @@ public class Data18Loader implements Runnable {
 						String scenePageContent = null;
 						scenePageContent = getHtmlContentByURL(sceneCoverURL);
 						scenePageContent = doPass(scenePageContent, sceneCoverURL);
+						if(scenePageContent.trim().isEmpty()) {
+							break;
+						}
 						int sceneCoverURLIndex = scenePageContent.indexOf(SCENECOVERURL);
 						int sceneCoverURLStartIndex = scenePageContent.indexOf(IMAGESRC, sceneCoverURLIndex);
 						int sceneCoverURLEndIndex = scenePageContent.indexOf(QUOTE, sceneCoverURLStartIndex + IMAGESRC.length() + 1);
