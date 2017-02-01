@@ -1,7 +1,7 @@
 package javasking.directory;
+
 import java.io.File;
 import java.io.FileFilter;
-import java.util.regex.Pattern;
 
 /**
  * 文件操作工具类。
@@ -9,15 +9,15 @@ import java.util.regex.Pattern;
  * @author JavaSking 2017年1月15日
  */
 public class FileTools {
-	
+
 	public static void main(String[] args) {
 
-		String filepath = "D:\\Music\\QQMusic\\姜玉阳";
+		String filepath = "D:\\DownLoad\\Alexa Grace";
 		String indent = "  ";
-		FileFilter filter = new MP3File();
+		FileFilter filter = new Directory();
 		FileTools.printDirectory(filepath, 0, indent, filter);
 	}
-	
+
 	/**
 	 * 打印文件目录树。
 	 * 
@@ -69,6 +69,22 @@ class MP3File implements FileFilter {
 	public boolean accept(File pathname) {
 
 		if (pathname.exists() && pathname.isFile() && pathname.getName().endsWith(MP3)) {
+			return true;
+		}
+		return false;
+	}
+}
+
+/**
+ * 目录。
+ * 
+ * @author JavaSking 2017年2月1日
+ */
+class Directory implements FileFilter {
+
+	public boolean accept(File pathname) {
+
+		if (pathname.exists() && pathname.isDirectory()) {
 			return true;
 		}
 		return false;

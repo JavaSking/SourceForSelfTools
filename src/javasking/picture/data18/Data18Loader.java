@@ -74,6 +74,8 @@ public class Data18Loader implements Runnable {
 	
 	private static final String IMAGESRC = "<img src=\"";
 	
+	private static final String LENGTH = "<span class=\"gensmall\"> - Length:";
+	
 
 	/**
 	 * 元信息。
@@ -114,9 +116,16 @@ public class Data18Loader implements Runnable {
 
 	public static void main(String[] args) {
 		
-		DATA18MetaData metaData = new DATA18MetaData("Wendy Whoppers", "http://www.data18.com/wendy_whoppers/filmography/", 1);
-		new Thread(new Data18Loader(metaData)).start();
-
+		DATA18MetaData[] metaDatas = new DATA18MetaData[]{
+				
+				//new DATA18MetaData("Wendy Whoppers", "http://www.data18.com/wendy_whoppers/filmography/", 1),
+				//new DATA18MetaData("Alexa Grace", "http://www.data18.com/alexa_grace/filmography/", 2),
+				//new DATA18MetaData("Angel Wicky", "http://www.data18.com/angel_wicky/filmography/", 2),
+				new DATA18MetaData("Casey Calvert", "http://www.data18.com/casey_calvert/filmography/", 5),
+		};
+		for(DATA18MetaData metaData : metaDatas) {
+			new Thread(new Data18Loader(metaData)).start();
+		}
 	}
 
 	public void run() {
@@ -209,9 +218,16 @@ public class Data18Loader implements Runnable {
 				String scene = parts[i].substring(sceneStartIndex + "<b>".length(), sceneEndIndex).trim();
 				System.out.println("Scene:	[" + scene + "]");
 				/* 提取时长 */
-				int durationStartIndex = parts[i].indexOf(SPAN);
-				int durationEndIndex = parts[i].indexOf("</p>", durationStartIndex + SPAN.length() + 1);
-				String duration = parts[i].substring(durationStartIndex + SPAN.length(),  durationEndIndex);
+				String duration = "";
+				if(parts[i].contains(LENGTH)) {
+					int lengthStartIndex = parts[i].indexOf(LENGTH);
+					int lengthEndIndex = parts[i].indexOf(":", lengthStartIndex + LENGTH.length() + 1);
+					duration = parts[i].substring(lengthStartIndex + LENGTH.length(), lengthEndIndex);
+				}else{
+					int durationStartIndex = parts[i].indexOf(SPAN);
+					int durationEndIndex = parts[i].indexOf("</p>", durationStartIndex + SPAN.length() + 1);
+					duration = parts[i].substring(durationStartIndex + SPAN.length(),  durationEndIndex);					
+				}
 				System.out.println("Duration:	[" + getDuration(duration) + "]");
 				/* 提取Scene图片 */
 				int sceneCoverIndex = parts[i].indexOf(SCENECOVER);
@@ -334,8 +350,14 @@ public class Data18Loader implements Runnable {
 	
 	private String getDuration(String date) {
 		
-		String temp = date.substring(date.lastIndexOf("&nbsp;") + "&nbsp;".length()).trim().replace(":", "").trim();
-		return temp.isEmpty() ? "" : " " + temp;
+		if(date.trim().isEmpty()) {
+			return "";
+		}else if(!date.contains("&nbsp;")){
+			return date.trim();
+		}else{
+			String temp = date.substring(date.lastIndexOf("&nbsp;") + "&nbsp;".length()).trim().replace(":", "").trim();
+			return temp.isEmpty() ? "" : " " + temp;
+		}
 	}
 	
 	private String getSeries(String pageContent) {
