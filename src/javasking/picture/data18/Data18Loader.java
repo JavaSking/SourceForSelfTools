@@ -19,7 +19,7 @@ import java.util.Map;
  */
 public class Data18Loader implements Runnable {
 	
-	// http://www.data18.com/sys/pass.php?ip=116.23.65.162&ref=/tanya_tate/filmography/
+	private static final String CONFIRMURL = "http://www.data18.com/sys/pass.php?";
 
 	/**
 	 * 保存根目录。
@@ -114,7 +114,7 @@ public class Data18Loader implements Runnable {
 
 	public static void main(String[] args) {
 		
-		DATA18MetaData metaData = new DATA18MetaData("Tanya Tate", "http://www.data18.com/tanya_tate/filmography/", 7);
+		DATA18MetaData metaData = new DATA18MetaData("Wendy Whoppers", "http://www.data18.com/wendy_whoppers/filmography/", 1);
 		new Thread(new Data18Loader(metaData)).start();
 
 	}
@@ -134,7 +134,9 @@ public class Data18Loader implements Runnable {
 	public void LoaderPicture(String pageURL, String savePath){
 		
 		System.out.println("\n" + "Loading the source of root page : " + pageURL + "\n");
-		String pageContent = getHtmlContentByURL(pageURL);
+		String pageContent = null;
+		pageContent = getHtmlContentByURL(pageURL);
+		pageContent = doPass(pageContent, pageURL);
 		Map<String, String> childPageURLS = extractChildPageURLS(pageURL, pageContent);
 		if(childPageURLS.size() > 0) {
 			for(String childpageURL : childPageURLS.keySet()) {
@@ -145,10 +147,28 @@ public class Data18Loader implements Runnable {
 		continueUndone();
 	}
 	
+	private String doPass(String pageContent, String pageURL) {
+		
+		while(pageContent.contains(CONFIRMURL)) {
+			System.out.println("[pageContent]: \n" + pageContent);
+			/* 获取检查URL*/
+			int confirmURLStartIndex = pageContent.indexOf(CONFIRMURL);
+			int confirmURLEndIndex = pageContent.indexOf(QUOTE, confirmURLStartIndex + CONFIRMURL.length() + 1);
+			String confirmURL = pageContent.substring(confirmURLStartIndex, confirmURLEndIndex);
+			System.out.println(confirmURL);
+			doConnection(confirmURL);
+			pageContent = getHtmlContentByURL(pageURL);
+			System.out.println(pageContent);
+		}
+		return pageContent;
+	}
+	
 	public void LoaderInformation(String pageURL, String date, String savePath) {
 		
 		System.out.println("\n" + "Loading the source of page : " + pageURL + "\n");
-		String pageContent = getHtmlContentByURL(pageURL);
+		String pageContent = null;
+		pageContent = getHtmlContentByURL(pageURL);
+		pageContent = doPass(pageContent, pageURL);
 		System.out.println("Date:	[" + date + "]");
 		/* 提取标题 */
 		int titleStartIndex = pageContent.indexOf(TITLE);
@@ -216,7 +236,9 @@ public class Data18Loader implements Runnable {
 						String sceneDirectory =  savePath + File.separator + subDirectory + File.separator + sceneDirectoryName;
 						new File(sceneDirectory).mkdirs();
 						/* 下载Scene封面图片 */
-						String scenePageContent = getHtmlContentByURL(sceneCoverURL);
+						String scenePageContent = null;
+						scenePageContent = getHtmlContentByURL(sceneCoverURL);
+						scenePageContent = doPass(scenePageContent, sceneCoverURL);
 						int sceneCoverURLIndex = scenePageContent.indexOf(SCENECOVERURL);
 						int sceneCoverURLStartIndex = scenePageContent.indexOf(IMAGESRC, sceneCoverURLIndex);
 						int sceneCoverURLEndIndex = scenePageContent.indexOf(QUOTE, sceneCoverURLStartIndex + IMAGESRC.length() + 1);
@@ -367,8 +389,34 @@ public class Data18Loader implements Runnable {
 		return result;
 	}
 	
-	
-	
+	private void doConnection(String URLString) {
+		
+		try{
+			URL url = new URL(URLString);
+			HttpURLConnection con = (HttpURLConnection) url.openConnection();
+			con.setInstanceFollowRedirects(false);
+			con.setUseCaches(false);
+			con.setConnectTimeout(20 * 1000);
+			con.setAllowUserInteraction(false);
+			con.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/45.0.2454.101 Safari/537.36");
+			con.connect();
+			StringBuffer sb = new StringBuffer();
+			String line = "";
+			InputStream in = con.getInputStream();
+			BufferedReader URLinput = new BufferedReader(new InputStreamReader(in, "UTF-8"));
+			while ((line = URLinput.readLine()) != null){
+				sb.append(line);
+			}
+			if(in != null) {
+				in.close();
+			}
+			if(URLinput != null) {
+				URLinput.close();
+			}
+		}catch (Exception e){
+			System.out.println("URL : " + URLString + " Error!");
+		}
+	}
 	
 	private String getHtmlContentByURL(String URLString, boolean isCase) {
 		
