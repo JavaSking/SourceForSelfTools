@@ -1,5 +1,3 @@
-package javasking.picture.bobx;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -9,71 +7,70 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * æ ¹æ®æ—¥å¿—å¯åŠ¨æ¢å¤æœºåˆ¶ã€‚æ”¯æŒå¤šçº¿ç¨‹ã€‚
+ * ¸ù¾İÈÕÖ¾Æô¶¯»Ö¸´»úÖÆ¡£Ö§³Ö¶àÏß³Ì¡£
  * 
- * @author ShijinLin
+ * @author JavaSking
  *
- * 2016å¹´12æœˆ9æ—¥
+ *         2016Äê12ÔÂ9ÈÕ
  */
-public class BOBXLoaderRecoverFromLogger implements Runnable{
-	
-	private String loggerFile;//æ¢å¤æ—¥å¿—æ–‡ä»¶
-	
+public class BOBXLoaderRecoverFromLogger implements Runnable {
+
+	private String loggerFile;// »Ö¸´ÈÕÖ¾ÎÄ¼ş
+
 	public BOBXLoaderRecoverFromLogger(String loggerFile) {
-		
+
 		this.loggerFile = loggerFile;
 	}
-	
+
 	public String getLoggerFile() {
-		
+
 		return this.loggerFile;
 	}
-	
+
 	public void run() {
-		
+
 		recover();
 	}
-	
+
 	public static void main(String[] args) {
-		
-		String[] files = new String[]{
-				"D:\\Workspace\\Eclipse\\WorkspaceLog\\recover\\ã‚ãšã¿æ‹ Misaki Ren.txt",
-		};
-		for(String file : files) {
-			
-			new Thread(new BOBXLoaderRecoverFromLogger(file)).start();
+
+		String directory = BOBXLoaderRecoverFromLogger.class.getResource("/").getPath().substring(1);
+		String logFileDir = directory + "ÏÂÔØ´íÎóÈÕÖ¾";
+		File[] logFiles = new File(logFileDir).listFiles();
+		for (File logFile : logFiles) {
+			new Thread(new BOBXLoaderRecoverFromLogger(logFile.getAbsolutePath())).start();
 		}
 	}
-	
-	/* ç”¨äºæ ‡è®°å¾…æ¢å¤åŠ¨ä½œ */
-	
-	public static final String IMAGE_KEY = "IMAGE_KEY";//æ¢å¤ä¸€å¼ å›¾ç‰‡
-	
-	public static final String BIG_IMAGE_URL_KEY = "BIG_IMAGE_URL_KEY";//æ¢å¤ä»å°å›¾é“¾æ¥åˆ°å¤§å›¾ä¸‹è½½åŠ¨ä½œ
-	
-	public static final String PHOTOSET_KEY = "PHOTOSET_KEY";//æ¢å¤ä¸€ä¸ªç…§ç‰‡é›†åŠ¨ä½œ
-	
-	public static final BOBXLoader LOADER = new BOBXLoader();//ä¸‹è½½å™¨
-	
+
+	/* ÓÃÓÚ±ê¼Ç´ı»Ö¸´¶¯×÷ */
+
+	public static final String IMAGE_KEY = "IMAGE_KEY";// »Ö¸´Ò»ÕÅÍ¼Æ¬
+
+	public static final String BIG_IMAGE_URL_KEY = "BIG_IMAGE_URL_KEY";// »Ö¸´´ÓĞ¡Í¼Á´½Óµ½´óÍ¼ÏÂÔØ¶¯×÷
+
+	public static final String PHOTOSET_KEY = "PHOTOSET_KEY";// »Ö¸´Ò»¸öÕÕÆ¬¼¯¶¯×÷
+
+	public static final BOBXLoader LOADER = new BOBXLoader();// ÏÂÔØÆ÷
+
 	public static final String IMAGE_TAG = "Saving the image from ";
-	
+
 	public static final String BIG_IMAGE_URL_TAG = " Collecting the big image url of ";
-	
+
 	public static final String PHOTOSET_TAG = " Extracting the title of photoset from  ";
-	
+
 	public void recover() {
-		
+
 		File logger = new File(getLoggerFile());
-		if(!logger.exists() || logger.isDirectory()) {
+		if (!logger.exists() || logger.isDirectory()) {
 			System.err.println("\n The file :" + getLoggerFile() + " is not exists or is not a file! return to do anything!\n");
 			return;
 		}
 		Map<String, List<String>> recoverRecords = readLineFromLogFile(logger);
-		for(String key : recoverRecords.keySet()) {
+		for (String key : recoverRecords.keySet()) {
 			List<String> imageRecords = recoverRecords.get(key);
-			if(key.equals(IMAGE_KEY)) {//æ¢å¤ä¸‹è½½ä¸€å¼ å¤§å›¾
-				for(String imageRecord : imageRecords) {
-					/* æå–å›¾ç‰‡URLå’Œä¿å­˜è·¯å¾„ */
+			if (key.equals(IMAGE_KEY)) {// »Ö¸´ÏÂÔØÒ»ÕÅ´óÍ¼
+				for (String imageRecord : imageRecords) {
+					/* ÌáÈ¡Í¼Æ¬URLºÍ±£´æÂ·¾¶ */
 					int urlstart = IMAGE_TAG.length() + 1;
 					int urlend = imageRecord.indexOf("]", urlstart);
 					String bigImageURL = imageRecord.substring(urlstart, urlend);
@@ -82,8 +79,8 @@ public class BOBXLoaderRecoverFromLogger implements Runnable{
 					String savefile = imageRecord.substring(savefilestart + 1, savefileend);
 					downLoadImageFromBigImageURL(bigImageURL, savefile);
 				}
-			}else if(key.equals(BIG_IMAGE_URL_KEY)) {//æ¢å¤ä»å°å›¾é¡µé¢é“¾æ¥åˆ°å¤§å›¾ä¸‹è½½
-				for(String imageRecord : imageRecords) {
+			} else if (key.equals(BIG_IMAGE_URL_KEY)) {// »Ö¸´´ÓĞ¡Í¼Ò³ÃæÁ´½Óµ½´óÍ¼ÏÂÔØ
+				for (String imageRecord : imageRecords) {
 					int urlstart = BIG_IMAGE_URL_TAG.length() + 1;
 					int urlend = imageRecord.indexOf("]", urlstart);
 					String smallImageURL = imageRecord.substring(urlstart, urlend);
@@ -92,8 +89,8 @@ public class BOBXLoaderRecoverFromLogger implements Runnable{
 					String savefile = imageRecord.substring(savefilestart + 1, savefileend);
 					downLoadImageFromSmallImageURL(smallImageURL, savefile);
 				}
-			}else if(key.equals(PHOTOSET_KEY)) {//æ¢å¤ä¸‹è½½ä¸€ä¸ªå›¾ç‰‡é›†
-				for(String imageRecord : imageRecords) {
+			} else if (key.equals(PHOTOSET_KEY)) {// »Ö¸´ÏÂÔØÒ»¸öÍ¼Æ¬¼¯
+				for (String imageRecord : imageRecords) {
 					int urlstart = PHOTOSET_TAG.length() + 1;
 					int urlend = imageRecord.indexOf("]", urlstart);
 					String photosetURL = imageRecord.substring(urlstart, urlend);
@@ -106,83 +103,89 @@ public class BOBXLoaderRecoverFromLogger implements Runnable{
 		}
 		continueUndone();
 	}
-	
+
 	/**
-	 * å®Œæˆæœªä¸‹è½½ä»»åŠ¡ã€‚
+	 * Íê³ÉÎ´ÏÂÔØÈÎÎñ¡£
 	 */
 	public void continueUndone() {
-		
+
 		LOADER.continueUndone();
 	}
-	
+
 	/**
-	 * ä»å­é¡µé¢ä¸­ä¸‹è½½å›¾ç‰‡é›†ä¿å­˜åˆ°æŒ‡å®šè·¯å¾„ã€‚
+	 * ´Ó×ÓÒ³ÃæÖĞÏÂÔØÍ¼Æ¬¼¯±£´æµ½Ö¸¶¨Â·¾¶¡£
 	 * 
-	 * @pageURL é¡µé¢è·¯å¾„
+	 * @pageURL Ò³ÃæÂ·¾¶
 	 * 
-	 * @param savePath å›¾ç‰‡ä¿å­˜è·¯å¾„ã€‚
+	 * @param savePath
+	 *          Í¼Æ¬±£´æÂ·¾¶¡£
 	 */
 	public void downLoadPhotosetFromURL(String pageURL, String savePath) {
-	
+
 		LOADER.downLoadPhotosetFromURL(pageURL, savePath);
 	}
-	
+
 	/**
-	 * åŠ¨ä½œï¼šæ¢å¤ä¸‹è½½å¤§å›¾åˆ°æŒ‡å®šç›®å½•ã€‚
+	 * ¶¯×÷£º»Ö¸´ÏÂÔØ´óÍ¼µ½Ö¸¶¨Ä¿Â¼¡£
 	 * 
-	 * @param bigImageURL å¾…ä¸‹è½½å›¾ç‰‡åœ°å€ã€‚
+	 * @param bigImageURL
+	 *          ´ıÏÂÔØÍ¼Æ¬µØÖ·¡£
 	 * 
-	 * @param savefile ä¿å­˜è·¯å¾„ã€‚
+	 * @param savefile
+	 *          ±£´æÂ·¾¶¡£
 	 */
 	public void downLoadImageFromBigImageURL(String bigImageURL, String savefile) {
-		
+
 		LOADER.downLoadImageFromBigImageURL(bigImageURL, savefile);
 	}
-	
+
 	/**
-	 * åŠ¨ä½œï¼šæ¢å¤ä»å°å›¾é¡µé¢é“¾æ¥åˆ°å¤§å›¾é¡µé¢è¿›è¡Œä¸‹è½½ã€‚
+	 * ¶¯×÷£º»Ö¸´´ÓĞ¡Í¼Ò³ÃæÁ´½Óµ½´óÍ¼Ò³Ãæ½øĞĞÏÂÔØ¡£
 	 * 
-	 * @param smallImageURL å°å›¾é¡µé¢ã€‚
+	 * @param smallImageURL
+	 *          Ğ¡Í¼Ò³Ãæ¡£
 	 * 
-	 * @param savefile å›¾ç‰‡ä¿å­˜è·¯å¾„ã€‚
+	 * @param savefile
+	 *          Í¼Æ¬±£´æÂ·¾¶¡£
 	 */
 	public void downLoadImageFromSmallImageURL(String smallImageURL, String savefile) {
-		
+
 		LOADER.downLoadImageFromSmallImageURL(smallImageURL, savefile);
 	}
-	
+
 	/**
-	 * ä»æ—¥å¿—ä¸­è¯»å–è¡Œã€‚æ—¥å¿—ä¸­æ¯ä¸€è¡Œä¿å­˜ä¸€ä¸ªå¾…æ¢å¤è®°å½•ã€‚
+	 * ´ÓÈÕÖ¾ÖĞ¶ÁÈ¡ĞĞ¡£ÈÕÖ¾ÖĞÃ¿Ò»ĞĞ±£´æÒ»¸ö´ı»Ö¸´¼ÇÂ¼¡£
 	 * 
-	 * @param logger æ—¥å¿—æ–‡ä»¶ã€‚
-	 * @return å¸¦æ¢å¤è®°å½•ã€‚
+	 * @param logger
+	 *          ÈÕÖ¾ÎÄ¼ş¡£
+	 * @return ´ø»Ö¸´¼ÇÂ¼¡£
 	 */
-	public Map<String, List<String>>readLineFromLogFile(File logger) {
-		
+	public Map<String, List<String>> readLineFromLogFile(File logger) {
+
 		String line = "";
 		BufferedReader reader = null;
 		List<String> IMAGE = new ArrayList<String>();
 		List<String> BIG_IMAGE_URL = new ArrayList<String>();
 		List<String> PHOTOSET = new ArrayList<String>();
 		Map<String, List<String>> recoverRecords = new HashMap<String, List<String>>();
-		try{
+		try {
 			reader = new BufferedReader(new FileReader(logger));
-			while((line = reader.readLine()) != null) {
-				if(line.startsWith(IMAGE_TAG)){
+			while ((line = reader.readLine()) != null) {
+				if (line.startsWith(IMAGE_TAG)) {
 					IMAGE.add(line);
-				}else if(line.startsWith(BIG_IMAGE_URL_TAG)) {
+				} else if (line.startsWith(BIG_IMAGE_URL_TAG)) {
 					BIG_IMAGE_URL.add(line);
-				}else if(line.startsWith(PHOTOSET_TAG)){
+				} else if (line.startsWith(PHOTOSET_TAG)) {
 					PHOTOSET.add(line);
 				}
 			}
-		}catch(Exception e) {
+		} catch (Exception e) {
 			System.err.println("\n Reading the logger occur error!");
 			e.printStackTrace();
 		}
 		recoverRecords.put(IMAGE_KEY, IMAGE);
 		recoverRecords.put(PHOTOSET_KEY, PHOTOSET);
 		recoverRecords.put(BIG_IMAGE_URL_KEY, BIG_IMAGE_URL);
-		return recoverRecords;//å¾…æ¢å¤è®°å½•ï¼Œkeyï¼šå¾…æ¢å¤åŠ¨ä½œæ ‡è¯† valueï¼šå¾…æ¢å¤åŠ¨ä½œåˆ—è¡¨
+		return recoverRecords;// ´ı»Ö¸´¼ÇÂ¼£¬key£º´ı»Ö¸´¶¯×÷±êÊ¶ value£º´ı»Ö¸´¶¯×÷ÁĞ±í
 	}
 }

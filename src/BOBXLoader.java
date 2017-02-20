@@ -1,10 +1,9 @@
-package javasking.picture.bobx;
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -17,19 +16,17 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * BOBXä¸‹è½½å™¨ï¼ŒåŒ…å«ä¸‹è½½æ¢å¤æœºåˆ¶ã€‚
+ * BOBXÍøÕ¾Í¼Æ¬ÏÂÔØÆ÷£¬°üº¬ÏÂÔØ»Ö¸´»úÖÆ¡£
  * 
- * æ”¯æŒå¤šçº¿ç¨‹ã€‚
+ * Ö§³Ö¶àÏß³Ì¡£
  * 
- * @author ShijinLin
+ * @author JavaSking
  *
- *         2016å¹´12æœˆ7æ—¥
+ *         2016Äê12ÔÂ7ÈÕ
  */
 public class BOBXLoader implements Runnable {
 
-	public static final String rootPath = "D:\\DownLoad";// ä¿å­˜ç›®å½•
-
-	private int photosetCount;// ç…§ç‰‡é›†æ•°
+	private int photosetCount;// ÕÕÆ¬¼¯Êı
 
 	public void setPhotosetCount(int photosetCount) {
 
@@ -41,7 +38,7 @@ public class BOBXLoader implements Runnable {
 		return this.photosetCount;
 	}
 
-	private BobxMetaData metaData;// å…ƒä¿¡æ¯
+	private BobxMetaData metaData;// ÔªĞÅÏ¢
 
 	public BOBXLoader(BobxMetaData metaData) {
 
@@ -59,7 +56,8 @@ public class BOBXLoader implements Runnable {
 
 	public void run() {
 
-		String savePath = rootPath + File.separator + getMetaData().getName();
+		String rootPath = this.getClass().getResource("/").getPath().substring(1);
+		String savePath = rootPath + getMetaData().getName();
 		System.out.println("\n" + "Save directory :  " + savePath + "\n");
 		for (int j = 1; j <= getMetaData().getLength(); j++) {
 
@@ -67,205 +65,83 @@ public class BOBXLoader implements Runnable {
 		}
 	}
 
-	/* æ¢å¤æ—¥å¿—å­˜æ”¾ç›®å½• */
-	public static final String LOGGER_DIRECTORY = "D:\\Workspace\\Eclipse\\WorkspaceLog";
-
 	public static void main(String[] args) {
 
-		BobxMetaData[] metaDatas = new BobxMetaData[] { // å…ƒæ•°æ®é›†åˆ
-
-				// new BobxMetaData("Julia", "http://www.bobx.com/av-idol/julia-julia/",
-				// 1),
-				// new BobxMetaData("ä»Šé‡æå— Konno Anna",
-				// "http://www.bobx.com/idol/anna-konno/", 1),
-				// new BobxMetaData("å¤©æµ·ç¿¼ Amami Tsubasa",
-				// "http://www.bobx.com/av-idol/tsubasa-amami/", 1),
-				// new BobxMetaData("æ¾æœ¬è‹¥èœ Wakana Matsumoto",
-				// "http://www.bobx.com/idol/wakana-matsumoto/", 1),
-				// new BobxMetaData("åŒ—å·æ™¯å­ Kitagawa keiko",
-				// "http://www.bobx.com/idol/keiko-kitagawa/", 1),
-				// new BobxMetaData("å±±å£æ²™çºª Saki Yamaguchi",
-				// "http://www.bobx.com/idol/saki-yamaguchi/", 1),
-				// new BobxMetaData("ç†Šç”°æ›œå­ Yoko Kumada",
-				// "http://www.bobx.com/idol/yoko-kumada/", 1),
-				// new BobxMetaData("å°æ—æƒ ç¾ Emi Kobayashi",
-				// "http://www.bobx.com/idol/emi-kobayashi/", 1),
-				// new BobxMetaData("ç¾é‡Œæœ‰ç´— Arisa Misato",
-				// "http://www.bobx.com/av-idol/arisa-misato/", 1),
-				// new BobxMetaData("å¸Œå´ã‚¸ã‚§ã‚·ã‚« Jessica Kisaki",
-				// "http://www.bobx.com/av-idol/jessica-kisaki/", 1),
-				// new BobxMetaData("å£‡èœœ Mitsu Dan",
-				// "http://www.bobx.com/idol/mitsu-dan/", 1),
-				// new BobxMetaData("æ¨ªå±±ç‰ç’ƒé¦™ Rurika Yokoyama",
-				// "http://www.bobx.com/idol/rurika-yokoyama/", 1),
-				// new BobxMetaData("å¤§æ©‹æœªä¹… Ohashi Miku",
-				// "http://www.bobx.com/av-idol/miku-ohashi/", 1),
-				// new BobxMetaData("å¤å· ã„ãŠã‚Š Iori Kogawa",
-				// "http://www.bobx.com/av-idol/iori-kogawa/", 1),
-				// new BobxMetaData("ç™½æœ¨å„ªå­ Yuko Shiraki",
-				// "http://www.bobx.com/av-idol/yuko-shiraki/", 1),
-				// new BobxMetaData("ç™½çŸ³èŒ‰è‰å¥ˆ Marina Shiraishi",
-				// "http://www.bobx.com/av-idol/marina-shiraishi/", 1),
-				// new BobxMetaData("ç¥å®¤èˆè¡£ Mai Kamuro",
-				// "http://www.bobx.com/idol/mai-kamuro/", 1),
-				// new BobxMetaData("æœ¬æ¾¤æœ‹ç¾ Tomomi Motozawa",
-				// "http://www.bobx.com/av-idol/tomomi-motozawa/", 1),
-				// new BobxMetaData("æ¨ªå±±ç¾é›ª Yokoyama Miyuki",
-				// "http://www.bobx.com/av-idol/miyuki-yokoyama/", 1),
-				// new BobxMetaData("æ¢…æœ¬é™é¦™ Shizuka Umemoto",
-				// "http://www.bobx.com/idol/shizuka-umemoto/", 1),
-				// new BobxMetaData("è‘‰å±±ç³ Mirei Nakagawa",
-				// "http://www.bobx.com/av-idol/mirei-nakagawa/", 1),
-				// new BobxMetaData("ä¸­å·æå¥ˆ Anna Nakagawa",
-				// "http://www.bobx.com/idol/anna-nakagawa/", 1),
-				// new BobxMetaData("æŸ³æ²¼æ·³å­ Junko Yaginuma",
-				// "http://www.bobx.com/idol/junko-yaginuma/", 1),
-				// new BobxMetaData("å±±æœ¬æ¢“ Azusa Yamamoto",
-				// "http://www.bobx.com/idol/azusa-yamamoto/", 1),
-				// new BobxMetaData("æœ¨å£äºšçŸ¢ Aya Kiguchi",
-				// "http://www.bobx.com/idol/aya-kiguchi/", 1),
-				// new BobxMetaData("çŸ³åŸé‡Œç¾ Satomi Ishihara",
-				// "http://www.bobx.com/idol/satomi-ishihara/", 1),
-				// new BobxMetaData("æ¡¥æœ¬çˆ±å® Manami Hashimoto",
-				// "http://www.bobx.com/idol/manami-hashimoto/", 1),
-				// new BobxMetaData("å‰å´ç›´ç·’ Nao Yoshizaki",
-				// "http://www.bobx.com/av-idol/nao-yoshizaki/", 1),
-				// new BobxMetaData("ä¸ŠåŸäºœè¡£ Ai Uehara",
-				// "http://www.bobx.com/av-idol/ai-uehara/", 1),
-				// new BobxMetaData("ä¸Šæ‰æ™ºä¸– Uesugi Tomoyo",
-				// "http://www.bobx.com/race-queen/tomoyo-uesugi/", 1),
-				// new BobxMetaData("å±±å´å‹å Yuka Yamazaki",
-				// "http://www.bobx.com/race-queen/yuka-yamazaki/", 1),
-				// new BobxMetaData("æ¾å¶‹ã‚Œã„ãª Reina Matsushima",
-				// "http://www.bobx.com/av-idol/reina-matsushima/", 1),
-				// new BobxMetaData("å°æ¾å½©å¤ Ayaka Komatsu",
-				// "http://www.bobx.com/idol/ayaka-komatsu/", 1),
-				// new BobxMetaData("å²©å´ç”±è¡£ Yui Iwasaki",
-				// "http://www.bobx.com/race-queen/yui-iwasaki/", 1),
-				// new BobxMetaData("é¥ã‚ãã¿ Megumi Haruka",
-				// "http://www.bobx.com/av-idol/megumi-haruka/", 1),
-				// new BobxMetaData("éŸ³ç¾½ãƒ¬ã‚ªãƒ³ Reon Otowa",
-				// "http://www.bobx.com/av-idol/reon-otowa/", 1),
-				// new BobxMetaData("ç”±çˆ±å¯å¥ˆ Kana Yume",
-				// "http://www.bobx.com/idol/kana-yume/", 1),
-				// new BobxMetaData("åŸçº±å¤®è‰ Saori Hara",
-				// "http://www.bobx.com/av-idol/saori-hara/", 1),
-				// new BobxMetaData("åŸç”°å¤å¸Œ Natsuki Harada",
-				// "http://www.bobx.com/idol/natsuki-harada/", 1),
-				// new BobxMetaData("ä½ä½æœ¨éº»è¡£ Mai Sasaki",
-				// "http://www.bobx.com/idol/mai-sasaki/", 1),
-				// new BobxMetaData("åŸå¹²æƒ  Mikie Hara",
-				// "http://www.bobx.com/idol/mikie-hara/", 1),
-				// new BobxMetaData("å·æ‘ã‚†ããˆ Yukie Kawamura",
-				// "http://www.bobx.com/idol/yukie-kawamura/", 1),
-				// new BobxMetaData("çŸ¢é‡ç»˜ç¾ Emi Yano",
-				// "http://www.bobx.com/idol/emi-yano/", 1),
-				// new BobxMetaData("æå°ç™¾åˆ Sayuri Anzu",
-				// "http://www.bobx.com/idol/sayuri-anzu/", 1),
-				// new BobxMetaData("ç§‹å±±è‰å¥ˆ Rina Akiyama",
-				// "http://www.bobx.com/idol/rina-akiyama/", 1),
-				// new BobxMetaData("æ¿é‡å‹ç¾ Tomomi Itano",
-				// "http://www.bobx.com/idol/tomomi-itano/", 1),
-				// new BobxMetaData("ä½ä½æœ¨å¸Œ Nozomi Sasaki",
-				// "http://www.bobx.com/idol/nozomi-sasaki/", 1),
-				// new BobxMetaData("æ‰æœ¬æœ‰ç¾ Yumi Sugimoto",
-				// "http://www.bobx.com/idol/yumi-sugimoto/", 1),
-				// new BobxMetaData("ç¾å’²å§« Hime Misaki",
-				// "http://www.bobx.com/idol/hime-misaki/", 1),
-				// new BobxMetaData("æ¿é‡å‹ç¾ Tomomi Itano",
-				// "http://www.bobx.com/idol/tomomi-itano/", 1),
-				// new BobxMetaData("å²¡å’²ç¿”å­ Syoko Okasaki",
-				// "http://www.bobx.com/race-queen/syoko-okasaki/", 1),
-				// new BobxMetaData("å®‰è¥¿çµèŠ± Yuika Anzai",
-				// "http://www.bobx.com/idol/anzai-yuka/jp_index.html", 1),
-				// new BobxMetaData("æ©˜ ã²ãªãŸ Hinata Tachibana",
-				// "http://www.bobx.com/av-idol/hinata-tachibana/", 1),
-				// new BobxMetaData("æ³½äº•ç²èœ Sawai Rena",
-				// "http://www.bobx.com/race-queen/rena-sawai/", 1),
-				// new BobxMetaData("å°å¶‹é™½èœ Haruna Kojima",
-				// "http://www.bobx.com/idol/haruna-kojima/", 1),
-				// new BobxMetaData("ä½è—¤è¡£é‡Œå­ Eriko Sato",
-				// "http://www.bobx.com/av-idol/erika-sato/", 1),
-				// new BobxMetaData("çŸ¢å¹æ˜¥å¥ˆ é˜¿éƒ¨çœŸç† Haruna Yabuki",
-				// "http://www.bobx.com/idol/haruna-yabuki/", 1),
-				// new BobxMetaData("çŸ¢å¹æ˜¥å¥ˆ é˜¿éƒ¨çœŸç† Haruna Yabuki",
-				// "http://www.bobx.com/idol/abe-mari/jp_index.html", 1),
-				// new BobxMetaData("æ³·æ³½ä¹ƒå— Nonami Takizawa",
-				// "http://www.bobx.com/idol/nonami-takizawa/", 1),
-				// new BobxMetaData("ã‚ãšã¿æ‹ Misaki Ren",
-				// "http://www.bobx.com/av-idol/azumi-ren/jp_index.html", 1),
-				// new BobxMetaData("å¯§ã€… Nene", "http://www.bobx.com/av-idol/nene-nene/",1),
-				// new BobxMetaData("çœæœ¨ã‚ãšã• Azusa Maki",
-				// "http://www.bobx.com/av-idol/azusa-maki/", 1),
-				// new BobxMetaData("æ°´é‡ç¢§ Midori Mizuno",
-				// "http://www.bobx.com/av-idol/midori-mizuno/", 1),
-				// new BobxMetaData("å†´å›éº»è¡£å­ Maiko Saegimi",
-				// "http://www.bobx.com/av-idol/maiko-saegimi/", 1),
-				// new BobxMetaData("æ¨ªå±±ã¿ã‚Œã„ Mirei Yokoyama",
-				// "http://www.bobx.com/av-idol/mirei-yokoyama/", 1),
-				// new BobxMetaData("èŠ¦åæœªå¸†ï¼ˆç¨²æ£®ã—ã»ã‚Šï¼‰ Shihori Inamori",
-				// "http://www.bobx.com/av-idol/shihori-inamori/", 1),
-		};
-
-		for (int i = 1; i <= metaDatas.length; i++) {
-
-			new Thread(new BOBXLoader(metaDatas[i - 1])).start();
+		/* »ñÈ¡µ±Ç°ÀàËùÔÚµÄÄ¿Â¼ */
+		String directory = BOBXLoader.class.getResource("/").getPath().substring(1);
+		BufferedReader reader = null;
+		String bobx = directory + "bobx.txt";// ÔªĞÅÏ¢ÎÄ¼ş
+		List<BobxMetaData> metaDatas = new ArrayList<BobxMetaData>();
+		int count = 0;
+		try {
+			reader = new BufferedReader(new FileReader(new File(bobx)));
+			String line;
+			while ((line = reader.readLine()) != null) {
+				count++;
+				int firstIndex = line.indexOf(",");
+				int secondIndex = line.indexOf(",", firstIndex + 2);
+				String name = line.substring(0, firstIndex).trim();
+				String url = line.substring(firstIndex + 1, secondIndex).trim();
+				int length = Integer.parseInt(line.substring(secondIndex + 1).trim());
+				metaDatas.add(new BobxMetaData(name, url, length));
+			}
+		} catch (Exception ex) {
+			System.err.println("¶ÁÈ¡ÎÄ¼ş¡¾" + bobx + "¡¿µÚ¡¾" + count + "¡¿Ê§°Ü!");
+		}
+		for (BobxMetaData metaData : metaDatas) {
+			new Thread(new BOBXLoader(metaData)).start();
 		}
 	}
 
-	/* ç½‘ç«™æ ¹è·¯å¾„ */
+	/* ÍøÕ¾¸ùÂ·¾¶ */
 	private static final String ROOT = "http://www.bobx.com";
 
 	/**
-	 * é”™è¯¯æ—¥å¿—ï¼Œç”¨äºæ¢å¤æœºåˆ¶ã€‚
+	 * ´íÎóÈÕÖ¾£¬ÓÃÓÚ»Ö¸´»úÖÆ¡£
 	 */
 	private StringBuffer errorLogger = new StringBuffer();
 
 	/**
-	 * æœªå®Œæˆåˆ—è¡¨ã€‚ä¿å­˜æ ¼å¼ï¼šä¸‹è½½å›¾ç‰‡URL ä¿å­˜è·¯å¾„
+	 * Î´Íê³ÉÁĞ±í¡£±£´æ¸ñÊ½£ºÏÂÔØÍ¼Æ¬URL ±£´æÂ·¾¶
 	 */
 	private Map<String, String> UNDONE = new HashMap<String, String>();
 
 	/**
-	 * ä¸‹è½½ç›®æ ‡é¡µé¢å›¾ç‰‡åˆ°æŒ‡å®šç›®å½•ã€‚
+	 * ÏÂÔØÄ¿±êÒ³ÃæÍ¼Æ¬µ½Ö¸¶¨Ä¿Â¼¡£
 	 * 
 	 * @param pageURL
-	 *          ç›®æ ‡é¡µé¢ã€‚
+	 *          Ä¿±êÒ³Ãæ¡£
 	 * @param savePath
-	 *          å›¾ç‰‡ä¿å­˜è·¯å¾„ã€‚
+	 *          Í¼Æ¬±£´æÂ·¾¶¡£
 	 */
 	public void LoaderPicture(String pageURL, String savePath) {
 
-		/* 1ã€è·å–èµ·å§‹é¡µé¢æºç  */
+		/* 1¡¢»ñÈ¡ÆğÊ¼Ò³ÃæÔ´Âë */
 		System.out.println("\n" + "Loading the source of root page : " + pageURL + "\n");
 		String pageContent = getHtmlContentByURL(pageURL);
-		// System.out.println("\n" + "The source of root page is :\n " + pageContent
-		// + "\n");
-		/* 2ã€æ ¹æ®ä¸åŒç½‘ç«™å›¾ç‰‡æ’ç‰ˆæ¨¡å¼ï¼Œè§£æè·å–æ‰€æœ‰å­é¡µé¢è·¯å¾„ï¼Œå­ç±»å®ç° */
-		// System.out.println("\n" + "Extracting the children pages from root page!"
-		// + "\n");
+		/* 2¡¢¸ù¾İ²»Í¬ÍøÕ¾Í¼Æ¬ÅÅ°æÄ£Ê½£¬½âÎö»ñÈ¡ËùÓĞ×ÓÒ³ÃæÂ·¾¶£¬×ÓÀàÊµÏÖ */
 		String[] childPageURLS = extractChildPageURLS(pageURL, pageContent);
-		setPhotosetCount(childPageURLS.length);// è®¾ç½®ç…§ç‰‡é›†æ•° ç”¨äºæ£€éªŒæ˜¯å¦ä¸‹è½½å®Œæ¯•
-		/* 3ã€ä¾æ¬¡è®¿é—®å­é¡µé¢ä¸‹è½½å›¾ç‰‡å¹¶ä¿å­˜ */
+		setPhotosetCount(childPageURLS.length);// ÉèÖÃÕÕÆ¬¼¯Êı ÓÃÓÚ¼ìÑéÊÇ·ñÏÂÔØÍê±Ï
+		/* 3¡¢ÒÀ´Î·ÃÎÊ×ÓÒ³ÃæÏÂÔØÍ¼Æ¬²¢±£´æ */
 		if (childPageURLS != null) {
 			for (String childpageURL : childPageURLS) {
 				System.out.println("\n" + "Downloading from the children page : [" + childpageURL + "]\n");
 				downLoadPhotosetFromURL(childpageURL, createDirectory(savePath));
 			}
 		}
-		recover(savePath);// å¯åŠ¨æ¢å¤æœºåˆ¶
+		recover(savePath);// Æô¶¯»Ö¸´»úÖÆ
 	}
 
 	/**
-	 * è§£æè·å–æ‰€æœ‰å­é¡µé¢è·¯å¾„ã€‚
+	 * ½âÎö»ñÈ¡ËùÓĞ×ÓÒ³ÃæÂ·¾¶¡£
 	 * 
 	 * @param pageURL
-	 *          çˆ¶é¡µé¢URLã€‚
+	 *          ¸¸Ò³ÃæURL¡£
 	 * 
 	 * @param pageContent
-	 *          çˆ¶é¡µé¢æºä»£ç ã€‚
+	 *          ¸¸Ò³ÃæÔ´´úÂë¡£
 	 * 
-	 * @return å­é¡µé¢åˆ—è¡¨ã€‚
+	 * @return ×ÓÒ³ÃæÁĞ±í¡£
 	 */
 	public String[] extractChildPageURLS(String pageURL, String pageContent) {
 
@@ -298,7 +174,7 @@ public class BOBXLoader implements Runnable {
 				} else {
 					result[i - 1] = pageURL.substring(0, pageURL.length() - 1) + "/" + temp;
 				}
-				System.out.println(result[i - 1]);// æ‰“å°å­é¡µé¢URLåˆ—è¡¨
+				System.out.println(result[i - 1]);// ´òÓ¡×ÓÒ³ÃæURLÁĞ±í
 			}
 		} catch (Exception ex) {
 			System.err.println("\n Extracting the children pages of [" + pageURL + "] occur error!\n");
@@ -308,13 +184,13 @@ public class BOBXLoader implements Runnable {
 	}
 
 	/**
-	 * è·å–å°å›¾é¡µé¢URLåˆ—è¡¨ã€‚
+	 * »ñÈ¡Ğ¡Í¼Ò³ÃæURLÁĞ±í¡£
 	 * 
 	 * @param pageContent
-	 *          å°å›¾åˆ—è¡¨é¡µé¢æºç 
+	 *          Ğ¡Í¼ÁĞ±íÒ³ÃæÔ´Âë
 	 * 
 	 * @param smallImageURLS
-	 *          å°å›¾é¡µé¢URLåˆ—è¡¨ã€‚
+	 *          Ğ¡Í¼Ò³ÃæURLÁĞ±í¡£
 	 */
 	public void collectSmallImageURL(String pageContent, List<String> smallImageURLS) {
 
@@ -337,17 +213,18 @@ public class BOBXLoader implements Runnable {
 			String nextpageURL = pageContent.substring(NEXTTAGINDEX + NEXTTAG.length(), nextpageend);
 			System.out.println("\nLoading the source of the next page : " + nextpageURL + "\n");
 			String nextPageContent = getHtmlContentByURL(nextpageURL);
-			collectSmallImageURL(nextPageContent, smallImageURLS);// é€’å½’è·å–ä¸‹ä¸€é¡µå°å›¾é¡µé¢URL
+			collectSmallImageURL(nextPageContent, smallImageURLS);// µİ¹é»ñÈ¡ÏÂÒ»Ò³Ğ¡Í¼Ò³ÃæURL
 		}
 	}
 
 	public void downLoadPhotosetFromURL(String pageURL, String savePath) {
 
 		String childPageContent = getHtmlContentByURL(pageURL);
-
-		/* 0ã€æå–IDOLåç§° ç”¨äºæ‹¼è£…å›¾ç‰‡ä¿å­˜è·¯å¾„ */
-		String IDOL = savePath.substring(savePath.lastIndexOf("\\") + 1);
-		/* 1ã€æå–æ ‡é¢˜å’Œç…§ç‰‡æ•°ç”¨äºåˆ›å»ºå­ç›®å½•ï¼ŒæŒ‰ç…§ç‰‡é›†åˆ†ç›®å½•ä¿å­˜ */
+		System.out.println(childPageContent);
+		/* 0¡¢ÌáÈ¡IDOLÃû³Æ ÓÃÓÚÆ´×°Í¼Æ¬±£´æÂ·¾¶ */
+		String IDOL = savePath.substring(savePath.lastIndexOf("/") + 1);
+		System.out.println(IDOL);
+		/* 1¡¢ÌáÈ¡±êÌâºÍÕÕÆ¬ÊıÓÃÓÚ´´½¨×ÓÄ¿Â¼£¬°´ÕÕÆ¬¼¯·ÖÄ¿Â¼±£´æ */
 		File directory = new File(savePath);
 		if (!directory.exists()) {
 			directory.mkdirs();
@@ -362,10 +239,10 @@ public class BOBXLoader implements Runnable {
 		String photoset = "";
 		int count = -1;
 		try {
-			/* æ ‡é¢˜ */
+			/* ±êÌâ */
 			int FONTPRETAGINDEX = childPageContent.indexOf(FONTPRETAG);
 			String title = "";
-			if (FONTPRETAGINDEX == -1) {// æœ€åä¸€ä¸ªç…§ç‰‡é›†
+			if (FONTPRETAGINDEX == -1) {// ×îºóÒ»¸öÕÕÆ¬¼¯
 				String BGCOLOR = "<tr bgcolor=\"#332233\"><td><center><span class=\"white\"><b>";
 				String BTAGEND = "</b>";
 				int idolstart = childPageContent.indexOf(BGCOLOR);
@@ -383,15 +260,15 @@ public class BOBXLoader implements Runnable {
 			} else {
 				int titleend = childPageContent.indexOf(FONTENDTEG, FONTPRETAGINDEX + FONTPRETAG.length() + 1);
 				title = childPageContent.substring(FONTPRETAGINDEX + FONTPRETAG.length(), titleend);
-				/* ç…§ç‰‡æ•° */
+				/* ÕÕÆ¬Êı */
 				int BRONZEINDEX = childPageContent.indexOf(BRONZE);
 				int numberend = childPageContent.indexOf(PIX, BRONZEINDEX + BRONZE.length() + 1);
 				String P = childPageContent.substring(BRONZEINDEX + BRONZE.length(), numberend - 1);
 				count = Integer.parseInt(P);
-				photoset = title + " " + IDOL + " [" + P + "P]";// ç»„è£…ç…§ç‰‡é›†åç§°ï¼šæ ‡é¢˜ æ¨¡ç‰¹å [å¼ æ•°]
+				photoset = title + " " + IDOL + " [" + P + "P]";// ×é×°ÕÕÆ¬¼¯Ãû³Æ£º±êÌâ Ä£ÌØÃû [ÕÅÊı]
 			}
 			if (photoset.contains("<br>")) {
-				photoset = photoset.replaceAll("<br>", "");// å¤„ç†æ ‡é¢˜æ¢è¡ŒBUG
+				photoset = photoset.replaceAll("<br>", "");// ´¦Àí±êÌâ»»ĞĞBUG
 			}
 		} catch (Exception ex) {
 			System.err.println("\n Extracting the title of photoset from  [" + pageURL + "] occur error! Not a picture save to [" + savePath + "]\n");
@@ -399,14 +276,15 @@ public class BOBXLoader implements Runnable {
 		}
 		if (photoset.equals(""))
 			return;
+		System.out.println(photoset);
 		File subDirectory = new File(savePath + File.separator + photoset);
 		if (!subDirectory.exists()) {
 			subDirectory.mkdirs();
 		}
-		if (subDirectory.listFiles().length == count) {/* å¦‚æœç…§ç‰‡é›†å·²ç»ä¸‹è½½å®Œæˆåˆ™ç›´æ¥è¿”å› */
+		if (subDirectory.listFiles().length == count) {/* Èç¹ûÕÕÆ¬¼¯ÒÑ¾­ÏÂÔØÍê³ÉÔòÖ±½Ó·µ»Ø */
 			return;
 		}
-		/* 2ã€æœé›†å°å›¾æ‰€åœ¨é¡µé¢ï¼Œç”¨äºé“¾æ¥åˆ°å¤§å›¾é¡µé¢è¿›è¡Œä¸‹è½½ */
+		/* 2¡¢ËÑ¼¯Ğ¡Í¼ËùÔÚÒ³Ãæ£¬ÓÃÓÚÁ´½Óµ½´óÍ¼Ò³Ãæ½øĞĞÏÂÔØ */
 		List<String> smallImageURLS = new ArrayList<String>();
 		try {
 			collectSmallImageURL(childPageContent, smallImageURLS);
@@ -416,28 +294,28 @@ public class BOBXLoader implements Runnable {
 		}
 		if (smallImageURLS.isEmpty())
 			return;
-		int index = 1;// ç…§ç‰‡ç´¢å¼•
+		int index = 1;// ÕÕÆ¬Ë÷Òı
 		for (String smallImageURL : smallImageURLS) {
-			String filename = photoset + "(" + index++ + ")" + ".jpg";// ä¿å­˜æ–‡ä»¶å
-			String savefile = savePath + File.separator + photoset + File.separator + filename;// ä¿å­˜è·¯å¾„
+			String filename = photoset + "(" + index++ + ")" + ".jpg";// ±£´æÎÄ¼şÃû
+			String savefile = savePath + File.separator + photoset + File.separator + filename;// ±£´æÂ·¾¶
 			downLoadImageFromSmallImageURL(smallImageURL, savefile);
 		}
 	}
 
 	/**
-	 * ä»å°å›¾é¡µé¢é“¾æ¥åˆ°å¤§å›¾é¡µé¢è¿›è¡Œä¸‹è½½ã€‚
+	 * ´ÓĞ¡Í¼Ò³ÃæÁ´½Óµ½´óÍ¼Ò³Ãæ½øĞĞÏÂÔØ¡£
 	 * 
 	 * @param smallImageURL
-	 *          å°å›¾é¡µé¢ã€‚
+	 *          Ğ¡Í¼Ò³Ãæ¡£
 	 * 
 	 * @param savefile
-	 *          å›¾ç‰‡ä¿å­˜è·¯å¾„ã€‚
+	 *          Í¼Æ¬±£´æÂ·¾¶¡£
 	 */
 	public void downLoadImageFromSmallImageURL(String smallImageURL, String savefile) {
 
 		if (new File(savefile).exists()) {
 			System.out.println("\nThe big image of small image : [" + smallImageURL + "] is already loaded to local [" + savefile + "]!\n");
-			return;/* æ–‡ä»¶å·²ç»å­˜åœ¨ï¼Œç›´æ¥è¿”å› */
+			return;/* ÎÄ¼şÒÑ¾­´æÔÚ£¬Ö±½Ó·µ»Ø */
 		}
 		String bigImageURL = "";
 		String DODOTAG = "dodo(\"";
@@ -466,19 +344,19 @@ public class BOBXLoader implements Runnable {
 	}
 
 	/**
-	 * ä¸‹è½½å¤§å›¾åˆ°æŒ‡å®šç›®å½•ã€‚
+	 * ÏÂÔØ´óÍ¼µ½Ö¸¶¨Ä¿Â¼¡£
 	 * 
 	 * @param bigImageURL
-	 *          å¤§å›¾è·¯å¾„ã€‚
+	 *          ´óÍ¼Â·¾¶¡£
 	 * 
 	 * @param savefile
-	 *          æŒ‡å®šä¿å­˜ç›®å½•ã€‚
+	 *          Ö¸¶¨±£´æÄ¿Â¼¡£
 	 */
 	public void downLoadImageFromBigImageURL(String bigImageURL, String savefile) {
 
 		if (new File(savefile).exists()) {
 			System.out.println("\nThe big image : [" + bigImageURL + "] is already loaded to local [" + savefile + "]!\n");
-			return;/* æ–‡ä»¶å·²ç»å­˜åœ¨ï¼Œç›´æ¥è¿”å› */
+			return;/* ÎÄ¼şÒÑ¾­´æÔÚ£¬Ö±½Ó·µ»Ø */
 		}
 		try {
 			URL url = new URL(bigImageURL);
@@ -502,7 +380,7 @@ public class BOBXLoader implements Runnable {
 		} catch (Exception ex) {
 			System.err.println("\nSaving the image from [" + bigImageURL + "] to local direction [" + savefile + "] occur error!\n");
 			errorLogger.append("\nSaving the image from [" + bigImageURL + "] to local direction [" + savefile + "] occur error!\n");
-			UNDONE.put(bigImageURL, savefile);// ä¿å­˜æœªå®Œæˆåˆ—è¡¨
+			UNDONE.put(bigImageURL, savefile);// ±£´æÎ´Íê³ÉÁĞ±í
 		}
 	}
 
@@ -512,12 +390,12 @@ public class BOBXLoader implements Runnable {
 	}
 
 	/**
-	 * ç»§ç»­æœªå®Œæˆä¸‹è½½
+	 * ¼ÌĞøÎ´Íê³ÉÏÂÔØ
 	 */
 	public void continueUndone() {
 
 		System.out.println("\n Loading the undone image!\n");
-		/* 2ã€å°è¯•å®Œæˆæœªä¸‹è½½çš„æ–‡ä»¶ */
+		/* 2¡¢³¢ÊÔÍê³ÉÎ´ÏÂÔØµÄÎÄ¼ş */
 		for (String undoneURL : UNDONE.keySet()) {
 			try {
 				URL url = new URL(undoneURL);
@@ -544,14 +422,14 @@ public class BOBXLoader implements Runnable {
 	}
 
 	/**
-	 * æ¢å¤æœºåˆ¶ï¼Œè®°å½•æ—¥å¿—ï¼Œå®Œæˆä¸­æ–­çš„ä¸‹è½½ä»»åŠ¡ã€‚
+	 * »Ö¸´»úÖÆ£¬¼ÇÂ¼ÈÕÖ¾£¬Íê³ÉÖĞ¶ÏµÄÏÂÔØÈÎÎñ¡£
 	 */
 	public void recover(String savePath) {
 
-		/* 1ã€å†™æ—¥å¿—æ–‡ä»¶ */
+		/* 1¡¢Ğ´ÈÕÖ¾ÎÄ¼ş */
 		String logfileName = savePath.substring(savePath.lastIndexOf(File.separator) + 1);
 		try {
-			File logFile = new File(LOGGER_DIRECTORY + File.separator + logfileName + ".txt");
+			File logFile = new File(savePath + File.separator + logfileName + "ÈÕÖ¾.txt");
 			BufferedWriter writer = new BufferedWriter(new FileWriter(logFile));
 			writer.write(errorLogger.toString());
 			if (writer != null) {
@@ -560,42 +438,42 @@ public class BOBXLoader implements Runnable {
 		} catch (Exception e) {
 			System.err.println("\n Error Write the log file!\n");
 		}
-		continueUndone();// å®Œæˆæœªä¸‹è½½ä»»åŠ¡
-		errorLogger = new StringBuffer();// æ¸…ç©ºæ—¥å¿—
-		UNDONE.clear();// æ¸…ç©ºæœªå®Œæˆåˆ—è¡¨
+		continueUndone();// Íê³ÉÎ´ÏÂÔØÈÎÎñ
+		errorLogger = new StringBuffer();// Çå¿ÕÈÕÖ¾
+		UNDONE.clear();// Çå¿ÕÎ´Íê³ÉÁĞ±í
 		checkTarget(savePath);
 	}
 
 	/**
-	 * æ£€éªŒä¸‹è½½ä»»åŠ¡æ˜¯å¦å®Œæˆã€‚
+	 * ¼ìÑéÏÂÔØÈÎÎñÊÇ·ñÍê³É¡£
 	 */
 	public void checkTarget(String savePath) {
 
 		String idol = savePath.substring(savePath.lastIndexOf(File.separator) + 1);
 		boolean result = true;
 		StringBuffer buffer = new StringBuffer();
-		/* 1ã€æ£€æŸ¥ç…§ç‰‡é›†æ•° */
+		/* 1¡¢¼ì²éÕÕÆ¬¼¯Êı */
 		File directory = new File(savePath);
 		File[] subFiles = directory.listFiles();
 		if (subFiles.length != getPhotosetCount()) {
 			result = false;
 		}
-		/* 2ã€æ£€æŸ¥å„ä¸ªç…§ç‰‡é›†ç…§ç‰‡æ•° */
+		/* 2¡¢¼ì²é¸÷¸öÕÕÆ¬¼¯ÕÕÆ¬Êı */
 		for (File subFile : subFiles) {
 			String subFileName = subFile.getName();
 			buffer.append(subFileName).append("\n");
 			int start = subFileName.lastIndexOf("[");
 			int end = subFileName.lastIndexOf("P]");
-			int count = Integer.parseInt(subFileName.substring(start + 1, end));// ç…§ç‰‡é›†ç…§ç‰‡æ•°
+			int count = Integer.parseInt(subFileName.substring(start + 1, end));// ÕÕÆ¬¼¯ÕÕÆ¬Êı
 			if (count != subFile.listFiles().length) {
 				result = false;
 			}
 		}
 		if (result) {
 			try {
-				// å†™æ ‡å¿—æ–‡ä»¶
+				// Ğ´±êÖ¾ÎÄ¼ş
 				new File(savePath + File.separator + idol + "_true.txt").createNewFile();
-				// å†™å½’æ¡£æ–‡ä»¶
+				// Ğ´¹éµµÎÄ¼ş
 				File guidang = new File(savePath + File.separator + idol + ".txt");
 				BufferedWriter writer = new BufferedWriter(new FileWriter(guidang));
 				writer.write(buffer.toString());
@@ -667,11 +545,11 @@ public class BOBXLoader implements Runnable {
 
 class BobxMetaData {
 
-	String NAME;// å›¾ç‰‡ç›®å½•åç§°
+	String NAME;// Í¼Æ¬Ä¿Â¼Ãû³Æ
 
-	String STARTURL;// èµ·å§‹URL
+	String STARTURL;// ÆğÊ¼URL
 
-	int LENGTH;// è®¿é—®æ·±åº¦
+	int LENGTH;// ·ÃÎÊÉî¶È
 
 	public BobxMetaData(String name, String startUrl, int length) {
 

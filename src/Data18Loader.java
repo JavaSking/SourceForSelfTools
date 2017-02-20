@@ -1,43 +1,37 @@
-package javasking.picture.data18;
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-import javasking.directory.FileTools;
-
 /**
- * 18Data.comä¸“è¾‘ä¸‹è½½å™¨ã€‚
+ * 18Data.com×¨¼­ÏÂÔØÆ÷¡£
  * 
- * @author JavaSking 2017å¹´1æœˆ28æ—¥
+ * @author JavaSking 2017Äê1ÔÂ28ÈÕ
  */
 public class Data18Loader implements Runnable {
-	
+
 	private static final String CONFIRMURL = "http://www.data18.com/sys/pass.php?";
 
 	/**
-	 * ä¿å­˜æ ¹ç›®å½•ã€‚
-	 */
-	public static final String rootPath = "D:\\DownLoad";
-
-	/**
-	 * æ—¥æœŸæ ‡ç­¾ã€‚
+	 * ÈÕÆÚ±êÇ©¡£
 	 */
 	private static final String DATE = "<p class=\"genmed\" style=\"text-align: left;\"><b>#";
 
 	/**
-	 * å°é¢æ ‡é¢˜ã€‚
+	 * ·âÃæ±êÌâ¡£
 	 */
 	private static final String TITLE = "<h1 style=\"height: 23px; overflow: hidden; font-size: 18px; margin: 3px;\">";
 
@@ -46,56 +40,56 @@ public class Data18Loader implements Runnable {
 	private static final String SITE = "<b>Site:</b>";
 
 	private static final String STUDIO = "<b>Studio:</b>";
-	
+
 	private static final String NETWORK = "<b>Network:</b>";
-	
+
 	private static final String B = "</b>";
-	
+
 	private static final String P = "</p>";
-	
+
 	private static final String HREF = "<a href=\"";
-	
+
 	private static final String QUOTE = "\"";
-	
+
 	private static final String COVER = "class=\"grouped_elements\"";
-	
+
 	private static final String COVERURL = "<img src=\"";
-	
+
 	private static final String SCENE = "<span class=\"gen\">";
-	
+
 	private static final String SPAN = "</span>";
-	
+
 	private static final String GEN12 = "<p class=\"gen12\">&nbsp;Starring: ";
-	
+
 	private static final String RIGHT = "\">";
-	
+
 	private static final String A = "</a>";
-	
+
 	private static final String TIME = "<b>Movie Length</b>:";
-	
+
 	private static final String SCENECOVER = "<div style=\"float: left; margin: 8px; width: 600px; overflow: hidden;\">";
-	
+
 	private static final String SCENECOVERURL = "<div id=\"moviewrap\" style=\"position: relative; width: 640; height: 335px; overflow: hidden;\">";
-	
+
 	private static final String IMAGESRC = "<img src=\"";
-	
+
 	private static final String LENGTH = "<span class=\"gensmall\"> - Length:";
-	
 
 	/**
-	 * å…ƒä¿¡æ¯ã€‚
+	 * ÔªĞÅÏ¢¡£
 	 */
 	private DATA18MetaData metaData;
-	
+
 	/**
-	 * æœªå®Œæˆåˆ—è¡¨ã€‚ä¿å­˜æ ¼å¼ï¼šä¸‹è½½å›¾ç‰‡URL ä¿å­˜è·¯å¾„
+	 * Î´Íê³ÉÁĞ±í¡£±£´æ¸ñÊ½£ºÏÂÔØÍ¼Æ¬URL ±£´æÂ·¾¶
 	 */
 	private Map<String, String> UNDONE = new HashMap<String, String>();
 
 	/**
-	 * æ„é€ æ–¹æ³•ã€‚
+	 * ¹¹Ôì·½·¨¡£
 	 * 
-	 * @param metaData å…ƒä¿¡æ¯ã€‚
+	 * @param metaData
+	 *          ÔªĞÅÏ¢¡£
 	 */
 	public Data18Loader(DATA18MetaData metaData) {
 
@@ -103,16 +97,16 @@ public class Data18Loader implements Runnable {
 	}
 
 	/**
-	 * é»˜è®¤æ„é€ æ–¹æ³•ã€‚
+	 * Ä¬ÈÏ¹¹Ôì·½·¨¡£
 	 */
 	public Data18Loader() {
 
 	}
 
 	/**
-	 * è·å–å…ƒä¿¡æ¯ã€‚
+	 * »ñÈ¡ÔªĞÅÏ¢¡£
 	 * 
-	 * @return å…ƒä¿¡æ¯ã€‚
+	 * @return ÔªĞÅÏ¢¡£
 	 */
 	public DATA18MetaData getMetaData() {
 
@@ -120,39 +114,47 @@ public class Data18Loader implements Runnable {
 	}
 
 	public static void main(String[] args) {
-		
-		DATA18MetaData[] metaDatas = new DATA18MetaData[]{
-				
-				//new DATA18MetaData("Wendy Whoppers", "http://www.data18.com/wendy_whoppers/filmography/", 1),
-				//new DATA18MetaData("Alexa Grace", "http://www.data18.com/alexa_grace/filmography/", 2),
-				//new DATA18MetaData("Angel Wicky", "http://www.data18.com/angel_wicky/filmography/", 2),
-				//new DATA18MetaData("Casey Calvert", "http://www.data18.com/casey_calvert/filmography/", 5),
-				//new DATA18MetaData("Jennifer White", "http://www.data18.com/jennifer_white/filmography/", 10),
-				//new DATA18MetaData("Amirah Adara", "http://www.data18.com/amirah_adara/filmography/", 4),
-				//new DATA18MetaData("Amy Anderssen", "http://www.data18.com/amy_anderssen/filmography/", 1),
-				//new DATA18MetaData("Karina Shay", "http://www.data18.com/karina_shay/filmography/", 1),
-				//new DATA18MetaData("Karina White", "http://www.data18.com/karina_white/filmography/", 2),
-				//new DATA18MetaData("Kortney Kane", "http://www.data18.com/kortney_kane/filmography/", 4),
-				new DATA18MetaData("Angela White", "http://www.data18.com/angela_white/filmography/", 1),
-				new DATA18MetaData("Chanel Preston", "http://www.data18.com/chanel_preston/filmography/", 11),
-		};
-		for(DATA18MetaData metaData : metaDatas) {
+
+		/* »ñÈ¡µ±Ç°ÀàËùÔÚµÄÄ¿Â¼ */
+		String directory = Data18Loader.class.getResource("/").getPath().substring(1);
+		BufferedReader reader = null;
+		String data18 = directory + "data18.txt";// ÔªĞÅÏ¢ÎÄ¼ş
+		List<DATA18MetaData> metaDatas = new ArrayList<DATA18MetaData>();
+		int count = 0;
+		try {
+			reader = new BufferedReader(new FileReader(new File(data18)));
+			String line;
+			while ((line = reader.readLine()) != null) {
+				count++;
+				int firstIndex = line.indexOf(",");
+				int secondIndex = line.indexOf(",", firstIndex + 2);
+				String name = line.substring(0, firstIndex).trim();
+				String url = line.substring(firstIndex + 1, secondIndex).trim();
+				int length = Integer.parseInt(line.substring(secondIndex + 1).trim());
+				metaDatas.add(new DATA18MetaData(name, url, length));
+			}
+		} catch (Exception ex) {
+			System.err.println("¶ÁÈ¡ÎÄ¼ş¡¾" + data18 + "¡¿µÚ¡¾" + count + "¡¿Ê§°Ü!");
+		}
+		for (DATA18MetaData metaData : metaDatas) {
 			new Thread(new Data18Loader(metaData)).start();
 		}
 	}
 
 	public void run() {
 
-		String savePath = rootPath + File.separator + getMetaData().getName();
+		String rootPath = this.getClass().getResource("/").getPath().substring(1);
+		String savePath = rootPath + getMetaData().getName();
 		System.out.println("\n" + "Save directory :  " + savePath + "\n");
-		/* åˆ›å»ºç›®å½• */
+		/* ´´½¨Ä¿Â¼ */
 		new File(savePath).mkdir();
 		for (int j = 1; j <= getMetaData().getLength(); j++) {
-			//System.out.println(getMetaData().createNextPageURL());
+			// System.out.println(getMetaData().createNextPageURL());
 			LoaderPicture(getMetaData().createNextPageURL(), savePath);
 		}
 		StringBuffer buffer = new StringBuffer();
-		FileTools.printDirectory(savePath, 0, "  ", new FileFilter(){
+		printDirectory(savePath, 0, "  ", new FileFilter() {
+
 			public boolean accept(File pathname) {
 
 				if (pathname.exists() && pathname.isDirectory()) {
@@ -163,46 +165,68 @@ public class Data18Loader implements Runnable {
 		}, buffer);
 		BufferedWriter writer = null;
 		String logFile = rootPath + File.separator + getMetaData().getName() + ".txt";
-		try{
+		try {
 			writer = new BufferedWriter(new FileWriter(new File(logFile)));
 			writer.write(buffer.toString());
 			writer.close();
-		}catch(Exception ex) {
+		} catch (Exception ex) {
 			System.err.println("Write File: [" + logFile + "] occur Error!");
 		}
 	}
-	
-	public void LoaderPicture(String pageURL, String savePath){
-		
+
+	private void printDirectory(String path, int level, String indent, FileFilter filter, StringBuffer buffer) {
+
+		File file = new File(path);
+		if (file.isFile()) {
+			if (filter == null || (filter != null && filter.accept(file))) {
+				for (int i = 1; i <= level; i++) {
+					buffer.append(indent);
+				}
+				buffer.append(file.getName()).append("\n");
+			}
+		} else if (file.isDirectory()) {
+			for (int i = 1; i <= level; i++) {
+				buffer.append(indent);
+			}
+			buffer.append(file.getName()).append("\n");
+			File[] subFiles = file.listFiles();
+			for (File subFile : subFiles) {
+				printDirectory(subFile.getAbsolutePath(), level + 1, indent, filter, buffer);
+			}
+		}
+	}
+
+	public void LoaderPicture(String pageURL, String savePath) {
+
 		System.out.println("\n" + "Loading the source of root page : " + pageURL + "\n");
 		String pageContent = null;
 		pageContent = getHtmlContentByURL(pageURL);
 		pageContent = doPass(pageContent, pageURL);
-		if(pageContent.trim().isEmpty()) {
+		if (pageContent.trim().isEmpty()) {
 			return;
 		}
 		Map<String, String> childPageURLS = extractChildPageURLS(pageURL, pageContent);
-		if(childPageURLS.size() > 0) {
-			for(String childpageURL : childPageURLS.keySet()) {
+		if (childPageURLS.size() > 0) {
+			for (String childpageURL : childPageURLS.keySet()) {
 				System.out.println("\n" + "Downloading from the children page : [" + childpageURL + "]\n");
 				LoaderInformation(childpageURL, childPageURLS.get(childpageURL), savePath);
 			}
 		}
 		continueUndone();
 	}
-	
+
 	private String doPass(String pageContent, String pageURL) {
-		
-		if(pageContent == null) {
+
+		if (pageContent == null) {
 			pageContent = getHtmlContentByURL(pageURL);
-			if(pageContent == null) {
+			if (pageContent == null) {
 				System.out.println("\n" + "URL : [" + pageURL + "] ERROR!");
 				return "";
 			}
 		}
-		while(pageContent.contains(CONFIRMURL)) {
+		while (pageContent.contains(CONFIRMURL)) {
 			System.out.println("[pageContent]: \n" + pageContent);
-			/* è·å–æ£€æŸ¥URL*/
+			/* »ñÈ¡¼ì²éURL */
 			int confirmURLStartIndex = pageContent.indexOf(CONFIRMURL);
 			int confirmURLEndIndex = pageContent.indexOf(QUOTE, confirmURLStartIndex + CONFIRMURL.length() + 1);
 			String confirmURL = pageContent.substring(confirmURLStartIndex, confirmURLEndIndex);
@@ -213,74 +237,74 @@ public class Data18Loader implements Runnable {
 		}
 		return pageContent;
 	}
-	
+
 	public void LoaderInformation(String pageURL, String date, String savePath) {
-		
+
 		System.out.println("\n" + "Loading the source of page : " + pageURL + "\n");
 		String pageContent = null;
 		pageContent = getHtmlContentByURL(pageURL);
 		pageContent = doPass(pageContent, pageURL);
-		if(pageContent.trim().isEmpty()) {
+		if (pageContent.trim().isEmpty()) {
 			return;
 		}
 		System.out.println("Date:	[" + date + "]");
-		/* æå–æ ‡é¢˜ */
+		/* ÌáÈ¡±êÌâ */
 		int titleStartIndex = pageContent.indexOf(TITLE);
 		int titleEndIndex = pageContent.indexOf("<", titleStartIndex + TITLE.length() + 1);
 		String title = pageContent.substring(titleStartIndex + TITLE.length(), titleEndIndex);
-		title = title.replace(':', '-').replace('/', '-').replace('?', '-'); 
+		title = title.replace(':', '-').replace('/', '-').replace('?', '-');
 		System.out.println("Title:	[" + title + "]");
-		/* æå–ç³»åˆ— */
+		/* ÌáÈ¡ÏµÁĞ */
 		String series = getSeries(pageContent);
 		System.out.println("Series:	[" + series + "]");
-		/* æå–å°é¢ */
+		/* ÌáÈ¡·âÃæ */
 		int coverStartIndex = pageContent.indexOf(COVER);
 		int coverURLStartIndex = pageContent.indexOf(COVERURL, coverStartIndex + COVER.length() + 1);
 		int coverURLEndIndex = pageContent.indexOf(QUOTE, coverURLStartIndex + COVERURL.length() + 1);
 		String coverURL = pageContent.substring(coverURLStartIndex + COVERURL.length(), coverURLEndIndex);
 		System.out.println("CoverURL:	[" + coverURL + "]");
-		/* æå–æ—¶é•¿ */
+		/* ÌáÈ¡Ê±³¤ */
 		String time = "";
-		if(pageContent.contains(TIME)) {
+		if (pageContent.contains(TIME)) {
 			int timeStartIndex = pageContent.indexOf(TIME);
 			int timeEndIndex = pageContent.indexOf("<a", timeStartIndex + TIME.length() + 1);
 			String tempTime = pageContent.substring(timeStartIndex + TIME.length(), timeEndIndex);
 			time = formatTime(tempTime);
 		}
 		System.out.println("Time:	[" + time + "]");
-		/* åˆ›å»ºå­ç›®å½• */
-		String subDirectory =  "[" + series + "]" + title + " " + date + " " + time + " min";
+		/* ´´½¨×ÓÄ¿Â¼ */
+		String subDirectory = "[" + series + "]" + title + " " + date + " " + time + " min";
 		new File(savePath + File.separator + subDirectory).mkdirs();
-		/* ä¿å­˜å°é¢ */
+		/* ±£´æ·âÃæ */
 		String cover = savePath + File.separator + subDirectory + File.separator + subDirectory + ".jpg";
 		downLoadCover(coverURL, cover);
 		String[] parts = pageContent.split(SCENE, -1);
-		try{
+		try {
 			for (int i = 1; i < parts.length; i++) {
-				/* è·å–Scene */
+				/* »ñÈ¡Scene */
 				int sceneStartIndex = parts[i].indexOf("<b>");
 				int sceneEndIndex = parts[i].indexOf(B, sceneStartIndex + "<b>".length() + 1);
 				String scene = parts[i].substring(sceneStartIndex + "<b>".length(), sceneEndIndex).trim();
 				System.out.println("Scene:	[" + scene + "]");
-				/* æå–æ—¶é•¿ */
+				/* ÌáÈ¡Ê±³¤ */
 				String duration = "";
-				if(parts[i].contains(LENGTH)) {
+				if (parts[i].contains(LENGTH)) {
 					int lengthStartIndex = parts[i].indexOf(LENGTH);
 					int lengthEndIndex = parts[i].indexOf(":", lengthStartIndex + LENGTH.length() + 1);
 					duration = parts[i].substring(lengthStartIndex + LENGTH.length(), lengthEndIndex);
-				}else{
+				} else {
 					int durationStartIndex = parts[i].indexOf(SPAN);
 					int durationEndIndex = parts[i].indexOf("</p>", durationStartIndex + SPAN.length() + 1);
-					duration = parts[i].substring(durationStartIndex + SPAN.length(),  durationEndIndex);					
+					duration = parts[i].substring(durationStartIndex + SPAN.length(), durationEndIndex);
 				}
 				System.out.println("Duration:	[" + getDuration(duration) + "]");
-				/* æå–Sceneå›¾ç‰‡ */
+				/* ÌáÈ¡SceneÍ¼Æ¬ */
 				int sceneCoverIndex = parts[i].indexOf(SCENECOVER);
 				int sceneCoverStartIndex = parts[i].indexOf(HREF, sceneCoverIndex);
 				int sceneCoverEndIndex = parts[i].indexOf(QUOTE, sceneCoverStartIndex + HREF.length() + 1);
 				String sceneCoverURL = parts[i].substring(sceneCoverStartIndex + HREF.length(), sceneCoverEndIndex);
 				System.out.println("sceneCoverURL:	[" + sceneCoverURL + "]");
-				/* æå–å½±æ˜Ÿ */
+				/* ÌáÈ¡Ó°ĞÇ */
 				int gen12StartIndex = parts[i].indexOf(GEN12);
 				int gen12EndIndex = parts[i].indexOf(P, gen12StartIndex + GEN12.length() + 1);
 				String Starring = parts[i].substring(gen12StartIndex + GEN12.length(), gen12EndIndex);
@@ -290,17 +314,17 @@ public class Data18Loader implements Runnable {
 					int starEndIndex = starParts[j].indexOf(A);
 					String star = starParts[j].substring(starStartIndex + RIGHT.length(), starEndIndex);
 					System.out.println("star:	[" + star + "]");
-					/* åŒ…å«ç›®æ ‡æ˜æ˜Ÿçš„Scene */
-					if(star.equalsIgnoreCase(getMetaData().getName())) {
+					/* °üº¬Ä¿±êÃ÷ĞÇµÄScene */
+					if (star.equalsIgnoreCase(getMetaData().getName())) {
 						String sceneDirectoryName = "[" + series + "]" + title + " " + date + " " + scene + getDuration(duration);
-						/* åˆ›å»ºSceneç›®å½• */
-						String sceneDirectory =  savePath + File.separator + subDirectory + File.separator + sceneDirectoryName;
+						/* ´´½¨SceneÄ¿Â¼ */
+						String sceneDirectory = savePath + File.separator + subDirectory + File.separator + sceneDirectoryName;
 						new File(sceneDirectory).mkdirs();
-						/* ä¸‹è½½Sceneå°é¢å›¾ç‰‡ */
+						/* ÏÂÔØScene·âÃæÍ¼Æ¬ */
 						String scenePageContent = null;
 						scenePageContent = getHtmlContentByURL(sceneCoverURL);
 						scenePageContent = doPass(scenePageContent, sceneCoverURL);
-						if(scenePageContent.trim().isEmpty()) {
+						if (scenePageContent.trim().isEmpty()) {
 							break;
 						}
 						int sceneCoverURLIndex = scenePageContent.indexOf(SCENECOVERURL);
@@ -311,33 +335,33 @@ public class Data18Loader implements Runnable {
 					}
 				}
 			}
-		}catch (Exception ex) {
+		} catch (Exception ex) {
 			System.err.println("\n Extracting the Scene of [" + pageURL + "] occur error!\n");
 		}
 	}
-	
+
 	/**
-	 * æ ¼å¼åŒ–æ—¶é—´ã€‚
+	 * ¸ñÊ½»¯Ê±¼ä¡£
 	 * 
 	 * @param tempTime
 	 * @return
 	 */
-	private String formatTime(String tempTime){
-		
-		if(tempTime.contains("min")) {
+	private String formatTime(String tempTime) {
+
+		if (tempTime.contains("min")) {
 			return tempTime.substring(0, tempTime.indexOf("min")).trim();
-		}else{
+		} else {
 			String temp = tempTime.substring(0, 9).trim();
 			int hour = Integer.parseInt(temp.substring(1, 2));
 			int minute = Integer.parseInt(temp.substring(3, 5));
 			return (hour * 60 + minute) + "";
 		}
 	}
-	
+
 	private void downLoadCover(String coverURL, String savePath) {
-		
-		if(new File(savePath).exists()) {
-			return ;
+
+		if (new File(savePath).exists()) {
+			return;
 		}
 		try {
 			URL url = new URL(coverURL);
@@ -363,14 +387,14 @@ public class Data18Loader implements Runnable {
 			UNDONE.put(coverURL, savePath);
 		}
 	}
-	
+
 	/**
-	 * ç»§ç»­æœªå®Œæˆä¸‹è½½
+	 * ¼ÌĞøÎ´Íê³ÉÏÂÔØ
 	 */
 	public void continueUndone() {
 
 		System.out.println("\n Loading the undone image!\n");
-		/* 2ã€å°è¯•å®Œæˆæœªä¸‹è½½çš„æ–‡ä»¶ */
+		/* 2¡¢³¢ÊÔÍê³ÉÎ´ÏÂÔØµÄÎÄ¼ş */
 		for (String undoneURL : UNDONE.keySet()) {
 			try {
 				URL url = new URL(undoneURL);
@@ -395,24 +419,24 @@ public class Data18Loader implements Runnable {
 			}
 		}
 	}
-	
+
 	private String getDuration(String date) {
-		
-		if(date.trim().isEmpty()) {
+
+		if (date.trim().isEmpty()) {
 			return "";
-		}else if(!date.contains("&nbsp;")){
+		} else if (!date.contains("&nbsp;")) {
 			return date.trim();
-		}else{
+		} else {
 			String temp = date.substring(date.lastIndexOf("&nbsp;") + "&nbsp;".length()).trim().replace(":", "").trim();
 			return temp.isEmpty() ? "" : " " + temp;
 		}
 	}
-	
+
 	private String getSeries(String pageContent) {
 
 		int bIndex = -1;
 		String TAG = "";
-		if(pageContent.contains(NETWORK)) {
+		if (pageContent.contains(NETWORK)) {
 			bIndex = pageContent.indexOf(NETWORK);
 			TAG = NETWORK;
 		} else if (pageContent.contains(SITE)) {
@@ -429,8 +453,7 @@ public class Data18Loader implements Runnable {
 		int seriesEndIndex = pageContent.indexOf("</a>", seriesStartIndex);
 		return pageContent.substring(seriesStartIndex + 1, seriesEndIndex);
 	}
-	
-	
+
 	public Map<String, String> extractChildPageURLS(String pageURL, String pageContent) {
 
 		Map<String, String> result = new HashMap<String, String>();
@@ -440,14 +463,14 @@ public class Data18Loader implements Runnable {
 		String[] parts = pageContent.split(DATE, -1);
 		try {
 			for (int i = 1; i < parts.length; i++) {
-				/* æå–æ—¥æœŸ */
+				/* ÌáÈ¡ÈÕÆÚ */
 				int dateStartIndex = parts[i].indexOf(B);
 				int dateEndIndex = parts[i].indexOf(P);
 				String date = parts[i].substring(dateStartIndex + B.length(), dateEndIndex).trim();
-				if(date.length() > 15) {
+				if (date.length() > 15) {
 					date = "PRE-RELEASE";
 				}
-				/* æå–URL */
+				/* ÌáÈ¡URL */
 				int urlStartIndex = parts[i].indexOf(HREF);
 				int urlEndIndex = parts[i].indexOf(QUOTE, urlStartIndex + HREF.length() + 1);
 				String url = parts[i].substring(urlStartIndex + HREF.length(), urlEndIndex);
@@ -458,10 +481,10 @@ public class Data18Loader implements Runnable {
 		}
 		return result;
 	}
-	
+
 	private void doConnection(String URLString) {
-		
-		try{
+
+		try {
 			URL url = new URL(URLString);
 			HttpURLConnection con = (HttpURLConnection) url.openConnection();
 			con.setInstanceFollowRedirects(false);
@@ -474,23 +497,23 @@ public class Data18Loader implements Runnable {
 			String line = "";
 			InputStream in = con.getInputStream();
 			BufferedReader URLinput = new BufferedReader(new InputStreamReader(in, "UTF-8"));
-			while ((line = URLinput.readLine()) != null){
+			while ((line = URLinput.readLine()) != null) {
 				sb.append(line);
 			}
-			if(in != null) {
+			if (in != null) {
 				in.close();
 			}
-			if(URLinput != null) {
+			if (URLinput != null) {
 				URLinput.close();
 			}
-		}catch (Exception e){
+		} catch (Exception e) {
 			System.out.println("URL : " + URLString + " Error!");
 		}
 	}
-	
+
 	private String getHtmlContentByURL(String URLString, boolean isCase) {
-		
-		try{
+
+		try {
 			URL url = new URL(URLString);
 			HttpURLConnection con = (HttpURLConnection) url.openConnection();
 			con.setInstanceFollowRedirects(false);
@@ -499,61 +522,61 @@ public class Data18Loader implements Runnable {
 			con.setAllowUserInteraction(false);
 			con.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/45.0.2454.101 Safari/537.36");
 			con.connect();
-			
+
 			StringBuffer sb = new StringBuffer();
 			String line = "";
 			InputStream in = con.getInputStream();
 			BufferedReader URLinput = new BufferedReader(new InputStreamReader(in, "UTF-8"));
-			while ((line = URLinput.readLine()) != null){
+			while ((line = URLinput.readLine()) != null) {
 				sb.append(line);
 			}
-			if(in != null) {
+			if (in != null) {
 				in.close();
 			}
-			if(URLinput != null) {
+			if (URLinput != null) {
 				URLinput.close();
 			}
 			return new String(isCase ? sb.toString() : sb.toString().toUpperCase());
-		}catch (Exception e){
+		} catch (Exception e) {
 			System.out.println("URL : " + URLString + " Error!");
-			return  null;
+			return null;
 		}
 	}
 
 	private String getHtmlContentByURL(String URLString) {
-		
+
 		return getHtmlContentByURL(URLString, true);
 	}
-	
+
 	private byte[] readInputStream(InputStream inputStream) throws IOException {
-		
+
 		byte[] buffer = new byte[1024];
 		int len = 0;
-		ByteArrayOutputStream bos = new ByteArrayOutputStream(); 
-		while((len = inputStream.read(buffer)) != -1) {  
+		ByteArrayOutputStream bos = new ByteArrayOutputStream();
+		while ((len = inputStream.read(buffer)) != -1) {
 			bos.write(buffer, 0, len);
 		}
 		bos.close();
-		return bos.toByteArray(); 
+		return bos.toByteArray();
 	}
 }
 
 /**
- * 18DATAç½‘ç«™å…ƒä¿¡æ¯ã€‚
+ * 18DATAÍøÕ¾ÔªĞÅÏ¢¡£
  * 
- * @author JavaSking 2017å¹´1æœˆ28æ—¥
+ * @author JavaSking 2017Äê1ÔÂ28ÈÕ
  */
 class DATA18MetaData {
 
-	String NAME;// å›¾ç‰‡ç›®å½•åç§°
+	String NAME;// Í¼Æ¬Ä¿Â¼Ãû³Æ
 
-	String STARTURL;// èµ·å§‹URL
+	String STARTURL;// ÆğÊ¼URL
 
-	int LENGTH;// è®¿é—®æ·±åº¦
-	
-	private int index = 1;//URLç´¢å¼•
-	
-	private static final String PAGE = "page";//ç”¨äºæ‹¼æ¥URL
+	int LENGTH;// ·ÃÎÊÉî¶È
+
+	private int index = 1;// URLË÷Òı
+
+	private static final String PAGE = "page";// ÓÃÓÚÆ´½ÓURL
 
 	public DATA18MetaData(String name, String startUrl, int length) {
 
@@ -579,10 +602,10 @@ class DATA18MetaData {
 
 	public String createNextPageURL() {
 
-		if(index == 1) {
+		if (index == 1) {
 			index++;
 			return getURL();
-		}else{
+		} else {
 			return getURL() + PAGE + "_" + (index++) + ".html";
 		}
 	}
